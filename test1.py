@@ -1,10 +1,6 @@
-# ==========================================
-# Sudoku CSP Solver (Backtracking + AC-3 + Forward Checking)
-# User selects difficulty -> program reads file and solves
-# Works in Google Colab / VS Code
-# ==========================================
-
 from copy import deepcopy
+backtracking_moves = 0
+
 
 # ------------------------------------------
 # Read Sudoku board from file
@@ -17,9 +13,6 @@ def read_board(filename):
     return board
 
 
-# ------------------------------------------
-# Print Sudoku board
-# ------------------------------------------
 def print_board(board):
     for i in range(9):
         if i % 3 == 0 and i != 0:
@@ -36,7 +29,7 @@ def print_board(board):
 
 
 # ------------------------------------------
-# Get all neighbors for each cell
+# Getting all neighbors for each cell
 # ------------------------------------------
 def get_neighbors():
     neighbors = {}
@@ -69,7 +62,7 @@ NEIGHBORS = get_neighbors()
 
 
 # ------------------------------------------
-# Initialize domains
+# Initializing domains
 # ------------------------------------------
 def initialize_domains(board):
     domains = {}
@@ -85,7 +78,7 @@ def initialize_domains(board):
 
 
 # ------------------------------------------
-# Revise function for AC-3
+# AC-3
 # ------------------------------------------
 def revise(domains, xi, xj):
     revised = False
@@ -157,6 +150,9 @@ def forward_check(domains, cell, value):
 # Backtracking Search
 # ------------------------------------------
 def backtrack(domains):
+    global backtracking_moves
+    backtracking_moves += 1
+
     if is_complete(domains):
         return domains
 
@@ -192,6 +188,9 @@ def domains_to_board(domains):
 # Solve Sudoku
 # ------------------------------------------
 def solve_sudoku(board):
+    global backtracking_moves
+    backtracking_moves = 0
+
     domains = initialize_domains(board)
 
     if not ac3(domains):
@@ -206,46 +205,53 @@ def solve_sudoku(board):
 
 
 # ==========================================
-# MAIN PROGRAM
+# MAIN 
 # ==========================================
 if __name__ == "__main__":
 
-    print("===================================")
-    print("      Sudoku CSP Solver")
-    print("===================================")
-    print("1. Easy")
-    print("2. Medium")
-    print("3. Hard")
-    print("4. Very Hard")
-    print("===================================")
+    while True:
+        print("---------------------------------------")
+        print("      CSP Based Sudoku Solver")
+        print("---------------------------------------")
+        print("1. Easy")
+        print("2. Medium")
+        print("3. Hard")
+        print("4. Very Hard")
+        print("5. Exit")
+        print("---------------------------------------")
 
-    choice = input("Enter your choice (1-4): ")
+        choice = input("Enter your choice (1-5): ")
 
-    # Switch case (match-case)
-    match choice:
-        case "1":
-            filename = "easy.txt"
-        case "2":
-            filename = "medium.txt"
-        case "3":
-            filename = "hard.txt"
-        case "4":
-            filename = "veryhard.txt"
-        case _:
-            print("Invalid choice!")
-            exit()
+        match choice:
+            case "1":
+                filename = "easy.txt"
+            case "2":
+                filename = "medium.txt"
+            case "3":
+                filename = "hard.txt"
+            case "4":
+                filename = "veryhard.txt"
+            case "5":
+                print("Exiting program...")
+                break
+            case _:
+                print("Invalid choice! Please try again.\n")
+                continue
 
-    print(f"\nReading puzzle from: {filename}\n")
+        print(f"\nReading puzzle from: {filename}\n")
 
-    board = read_board(filename)
+        board = read_board(filename)
 
-    print("Original Sudoku Board:")
-    print_board(board)
+        print("Original Sudoku Board:")
+        print_board(board)
 
-    solution = solve_sudoku(board)
+        solution = solve_sudoku(board)
 
-    if solution:
-        print("Solved Sudoku Board:")
-        print_board(solution)
-    else:
-        print("No solution found.")
+        if solution:
+            print("Solved Sudoku Board:")
+            print_board(solution)
+        else:
+            print("No solution found.")
+
+        print(f"Backtracking moves taken: {backtracking_moves}\n")
+        print(f"\n\nDeveloped by Muhammad Luqman @23F-0640")
